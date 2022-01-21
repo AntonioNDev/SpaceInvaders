@@ -1,6 +1,6 @@
 {
     "Player": {
-        "PlayerX": 370,
+        "PlayerX": 330,
         "PlayerY": 480,
         "PlayerX_moving_speed": 0,
         "PlayerImage": "images/plane.png"
@@ -13,7 +13,7 @@
         "BulletImage": "images/bullet.png"
     },
     "Enemies": {
-        "Number_Of_Enemies": 5,
+        "Number_Of_Enemies": 1,
         "EnemyX": [],
         "EnemyY": [],
         "EnemyX_moving_speed": [],
@@ -32,5 +32,9 @@
     "GameOver": {
         "textX": 200,
         "textY": 250
+    },
+    "Music": {
+        "song": "Music/BGMusic.mp3",
+        "laserSound": "Music/laser.mp3"
     }
 }

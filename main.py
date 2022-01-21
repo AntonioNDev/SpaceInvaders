@@ -1,8 +1,10 @@
+import imp
 import pygame
 import random
 import math
 import json
 import threading
+from pygame import mixer
 
 #Game configurations
 pygame.init()
@@ -26,6 +28,8 @@ black = (0,0,0)
 
 f = open('GameSettings.json')
 data = json.load(f)
+mixer.music.load(data["Music"]["song"])
+mixer.music.play(-1)
 
 #Main game class
 class Game:
@@ -36,25 +40,25 @@ class Game:
    def player(self,x,y):
       window.blit(pygame.image.load(data["Player"]["PlayerImage"]), (x,y))
 
+   #Append enemies in the list
    def createEnemies():
-      for j in range(data["Enemies"]["Number_Of_Enemies"]):
-         data["Enemies"]["EnemyX"].append(random.randint(10, 630))
+      for _ in range(data["Enemies"]["Number_Of_Enemies"]):
+         data["Enemies"]["EnemyX"].append(350)
          data["Enemies"]["EnemyY"].append(50)
          data["Enemies"]["EnemyX_moving_speed"].append(0.5)
-         data["Enemies"]["EnemyY_moving_speed"].append(15)
+         data["Enemies"]["EnemyY_moving_speed"].append(30)
 
-         if len(data["Enemies"]["EnemyX"]) >= 5:
+         if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["Number_Of_Enemies"]:
             break
 
-   #Second thread to reduce speed
+   #Thread to call createEnemies
    x = threading.Thread(target=createEnemies, daemon=True)
    x.start()
 
-   #Conf for enemy
-   def enemy(self,x,y,i):
-      window.blit(pygame.image.load(data["Enemies"]["EnemiesImages"][1]), (x, y))
-
-
+   #Conf for enemy NOTE: Try to make every alien with their own image
+   def enemy(self,x,y):
+      image = pygame.image.load(data["Enemies"]["EnemiesImages"][0])
+      window.blit(image, (x,y))
 
    #Conf for bullet
    def bullet(self,x,y):
@@ -64,7 +68,6 @@ class Game:
    #Check if the bullet and enemy have collided 
    def isCollided(self,enemyX,enemyY,bulletX,bulletY):
       pass
-
    #Conf for the score
    def score(textX, textY):
       pass
@@ -103,6 +106,8 @@ class Game:
                #If space is pressed then shoot:
                if event.key == pygame.K_SPACE:
                   if data["Bullet"]["Bullet_moving"] != "fired":
+                     laser = mixer.Sound(data["Music"]["laserSound"])
+                     laser.play()
                      bulletX = data["Player"]["PlayerX"]
                      self.bullet(bulletX, data["Bullet"]["BulletY"])
             #check if the key is released
@@ -121,7 +126,7 @@ class Game:
             data["Player"]["PlayerX"] = 640
 
          #Check if bullet reach the top if yes then return
-         if data["Bullet"]["BulletY"] <= 0:
+         if data["Bullet"]["BulletY"] <= -100:
             data["Bullet"]["BulletY"] = 480
             data["Bullet"]["Bullet_moving"] = "ready"
 
@@ -129,16 +134,25 @@ class Game:
             self.bullet(bulletX, data["Bullet"]["BulletY"])
             data["Bullet"]["BulletY"] -= data["Bullet"]["BulletY_moving_speed"]
 
-         #Control enemies
+         
+         #Control enemies NOTE: FIX THE LAG
          for x in range(data["Enemies"]["Number_Of_Enemies"]):
             #Moving speed of the enemy
-            data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
+            #data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
             #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
-            if data["Enemies"]["EnemyX"][x] <= 0:
+            """ if data["Enemies"]["EnemyX"][x] <= 0:
                data["Enemies"]["EnemyX_moving_speed"][x] = 0.3
+               data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
                #LATER MAKE TO MOVE Y 
             elif data["Enemies"]["EnemyX"][x] >= 640:
                data["Enemies"]["EnemyX_moving_speed"][x] = -0.3
+               data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x] """
+
+
+            self.enemy(data["Enemies"]["EnemyX"][x],data["Enemies"]["EnemyY"][x])
+
+      
+
 
          self.player(data["Player"]["PlayerX"], data["Player"]["PlayerY"])
 
