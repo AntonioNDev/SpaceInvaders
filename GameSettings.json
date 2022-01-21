@@ -1,0 +1,36 @@
+{
+    "Player": {
+        "PlayerX": 370,
+        "PlayerY": 480,
+        "PlayerX_moving_speed": 0,
+        "PlayerImage": "images/plane.png"
+    },
+    "Bullet": {
+        "BulletX": 0,
+        "BulletY": 480,
+        "BulletY_moving_speed": 2,
+        "Bullet_moving": "ready",
+        "BulletImage": "images/bullet.png"
+    },
+    "Enemies": {
+        "Number_Of_Enemies": 5,
+        "EnemyX": [],
+        "EnemyY": [],
+        "EnemyX_moving_speed": [],
+        "EnemyY_moving_speed": [],
+        "EnemiesImages": [
+            "images/alien1.png",
+            "images/alien2.png",
+            "images/alien3.png"
+        ]
+    },
+    "Score": {
+        "Score_value": 0,
+        "textX": 10,
+        "textY": 10
+    },
+    "GameOver": {
+        "textX": 200,
+        "textY": 250
+    }
+}
