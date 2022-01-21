@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import json
+import threading
 
 #Game configurations
 pygame.init()
@@ -35,9 +36,25 @@ class Game:
    def player(self,x,y):
       window.blit(pygame.image.load(data["Player"]["PlayerImage"]), (x,y))
 
+   def createEnemies():
+      for j in range(data["Enemies"]["Number_Of_Enemies"]):
+         data["Enemies"]["EnemyX"].append(random.randint(10, 630))
+         data["Enemies"]["EnemyY"].append(50)
+         data["Enemies"]["EnemyX_moving_speed"].append(0.5)
+         data["Enemies"]["EnemyY_moving_speed"].append(15)
+
+         if len(data["Enemies"]["EnemyX"]) >= 5:
+            break
+
+   #Second thread to reduce speed
+   x = threading.Thread(target=createEnemies, daemon=True)
+   x.start()
+
    #Conf for enemy
-   def enemy(self, x,y,i):
-      pass
+   def enemy(self,x,y,i):
+      window.blit(pygame.image.load(data["Enemies"]["EnemiesImages"][1]), (x, y))
+
+
 
    #Conf for bullet
    def bullet(self,x,y):
@@ -112,9 +129,22 @@ class Game:
             self.bullet(bulletX, data["Bullet"]["BulletY"])
             data["Bullet"]["BulletY"] -= data["Bullet"]["BulletY_moving_speed"]
 
+         #Control enemies
+         for x in range(data["Enemies"]["Number_Of_Enemies"]):
+            #Moving speed of the enemy
+            data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
+            #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
+            if data["Enemies"]["EnemyX"][x] <= 0:
+               data["Enemies"]["EnemyX_moving_speed"][x] = 0.3
+               #LATER MAKE TO MOVE Y 
+            elif data["Enemies"]["EnemyX"][x] >= 640:
+               data["Enemies"]["EnemyX_moving_speed"][x] = -0.3
 
          self.player(data["Player"]["PlayerX"], data["Player"]["PlayerY"])
+
          pygame.display.update()
+
+
 
 start = Game()
 start.main()
