@@ -8,12 +8,12 @@
     "Bullet": {
         "BulletX": 0,
         "BulletY": 480,
-        "BulletY_moving_speed": 2,
+        "BulletY_moving_speed": 3,
         "Bullet_moving": "ready",
         "BulletImage": "images/bullet.png"
     },
     "Enemies": {
-        "Number_Of_Enemies": 1,
+        "Number_Of_Enemies": 3,
         "EnemyX": [],
         "EnemyY": [],
         "EnemyX_moving_speed": [],
@@ -35,6 +35,10 @@
     },
     "Music": {
         "song": "Music/BGMusic.mp3",
-        "laserSound": "Music/laser.mp3"
+        "laserSound": "Music/laser.mp3",
+        "explosion": "Music/explosion.wav"
+    },
+    "Background": {
+        "image": "images/background.png"
     }
 }

@@ -1,10 +1,11 @@
-import imp
+from turtle import distance
 import pygame
 import random
 import math
 import json
 import threading
 from pygame import mixer
+
 
 #Game configurations
 pygame.init()
@@ -16,9 +17,6 @@ iconPath = pygame.image.load("images/icon.png")
 pygame.display.set_icon(iconPath)
 
 
-#Game images paths
-background = pygame.image.load("images/background.png")
-bulletImage = pygame.image.load("images/bullet.png")
 
 #Colors
 white = (255,255,255)
@@ -28,8 +26,11 @@ black = (0,0,0)
 
 f = open('GameSettings.json')
 data = json.load(f)
-mixer.music.load(data["Music"]["song"])
-mixer.music.play(-1)
+#Background music
+""" mixer.music.load(data["Music"]["song"])
+mixer.music.play(-1) """
+
+backgroundImage = pygame.image.load(data["Background"]["image"])
 
 #Main game class
 class Game:
@@ -43,10 +44,10 @@ class Game:
    #Append enemies in the list
    def createEnemies():
       for _ in range(data["Enemies"]["Number_Of_Enemies"]):
-         data["Enemies"]["EnemyX"].append(350)
-         data["Enemies"]["EnemyY"].append(50)
-         data["Enemies"]["EnemyX_moving_speed"].append(0.5)
-         data["Enemies"]["EnemyY_moving_speed"].append(30)
+         data["Enemies"]["EnemyX"].append(int(random.randint(10,640) + 5))
+         data["Enemies"]["EnemyY"].append(int(random.randint(10,150)))
+         data["Enemies"]["EnemyX_moving_speed"].append(1)
+         data["Enemies"]["EnemyY_moving_speed"].append(int(random.randint(10,35)))
 
          if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["Number_Of_Enemies"]:
             break
@@ -67,7 +68,9 @@ class Game:
 
    #Check if the bullet and enemy have collided 
    def isCollided(self,enemyX,enemyY,bulletX,bulletY):
-      pass
+      distance = math.sqrt((math.pow(enemyX - bulletX, 2)) + (math.pow(enemyY - bulletY, 2)))
+      if distance < 27:
+         return True
    #Conf for the score
    def score(textX, textY):
       pass
@@ -88,7 +91,7 @@ class Game:
          window.fill((black))
 
          #Background image
-         window.blit(background,(0,0))
+         window.blit(backgroundImage,(0,0))
 
          #Loop through event keys
          for event in pygame.event.get():
@@ -99,10 +102,10 @@ class Game:
             if event.type == pygame.KEYDOWN:
                #IF left key is pressed then move left
                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                  data["Player"]["PlayerX_moving_speed"] = -0.9
+                  data["Player"]["PlayerX_moving_speed"] = -2
                #If right key is pressed move right
                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                  data["Player"]["PlayerX_moving_speed"] = 0.9
+                  data["Player"]["PlayerX_moving_speed"] = 2
                #If space is pressed then shoot:
                if event.key == pygame.K_SPACE:
                   if data["Bullet"]["Bullet_moving"] != "fired":
@@ -126,7 +129,7 @@ class Game:
             data["Player"]["PlayerX"] = 640
 
          #Check if bullet reach the top if yes then return
-         if data["Bullet"]["BulletY"] <= -100:
+         if data["Bullet"]["BulletY"] <= -50:
             data["Bullet"]["BulletY"] = 480
             data["Bullet"]["Bullet_moving"] = "ready"
 
@@ -138,19 +141,28 @@ class Game:
          #Control enemies NOTE: FIX THE LAG
          for x in range(data["Enemies"]["Number_Of_Enemies"]):
             #Moving speed of the enemy
-            #data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
+            data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
             #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
-            """ if data["Enemies"]["EnemyX"][x] <= 0:
-               data["Enemies"]["EnemyX_moving_speed"][x] = 0.3
+            if data["Enemies"]["EnemyX"][x] <= 0:
+               data["Enemies"]["EnemyX_moving_speed"][x] = random.randint(2,3)
                data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
-               #LATER MAKE TO MOVE Y 
             elif data["Enemies"]["EnemyX"][x] >= 640:
-               data["Enemies"]["EnemyX_moving_speed"][x] = -0.3
-               data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x] """
+               data["Enemies"]["EnemyX_moving_speed"][x] = int(f"-{random.randint(2,3)}")
+               data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
+
+            #print(f"EnemyX:{data['Enemies']['EnemyX']}--EnemyY:{data['Enemies']['EnemyX'][x]} ---- BulletX:{data['Bullet']['BulletX']}--BulletY:{data['Bullet']['BulletY']}")
+            kaboom = self.isCollided(data["Enemies"]["EnemyX"][x], data["Enemies"]["EnemyY"][x], bulletX, data["Bullet"]["BulletY"]) 
+            
+            if kaboom == True:
+               data["Bullet"]["BulletY"] = 480
+               data["Bullet"]["Bullet_moving"] = "ready" 
+               explosion = mixer.Sound(data["Music"]["explosion"])
+               explosion.play()
+               zuz = data["Enemies"]["EnemyY"][x] = 1000
+
 
 
             self.enemy(data["Enemies"]["EnemyX"][x],data["Enemies"]["EnemyY"][x])
-
       
 
 
