@@ -4,7 +4,7 @@ import random
 import math
 import json
 import threading
-from pygame import mixer
+from pygame import font, mixer
 
 
 #Game configurations
@@ -31,7 +31,7 @@ data = json.load(f)
 mixer.music.play(-1) """
 
 backgroundImage = pygame.image.load(data["Background"]["image"])
-
+alive_aliens = data["Enemies"]["NOE"]
 #Main game class
 class Game:
    #Game conf settings
@@ -43,13 +43,13 @@ class Game:
 
    #Append enemies in the list
    def createEnemies():
-      for _ in range(data["Enemies"]["Number_Of_Enemies"]):
+      for _ in range(data["Enemies"]["NOE"]):
          data["Enemies"]["EnemyX"].append(int(random.randint(10,640) + 5))
          data["Enemies"]["EnemyY"].append(int(random.randint(10,150)))
          data["Enemies"]["EnemyX_moving_speed"].append(1)
          data["Enemies"]["EnemyY_moving_speed"].append(int(random.randint(10,35)))
 
-         if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["Number_Of_Enemies"]:
+         if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["NOE"]:
             break
 
    #Thread to call createEnemies
@@ -72,16 +72,21 @@ class Game:
       if distance < 27:
          return True
    #Conf for the score
-   def score(textX, textY):
-      pass
+   def score(self):
+      font = pygame.font.Font(data["Score"]["font"], 40)
+      score_text = font.render(f"Aliens alive {alive_aliens}", True, (white))
+      window.blit(score_text, (data["Score"]["scoreX"], data["Score"]["scoreY"]))
 
    #Game over text
    def game_over(self):
-      pass
+      font = pygame.font.Font(data["GameOver"]["font"], 64)
+
+      over_text = font.render("GAME OVER", True, (black))
+      window.blit(over_text, (150,200))
 
    #Main function
    def main(self):
-      global bulletX
+      global bulletX, alive_aliens
       bulletX = 0
       #while running is true the window will be displayed, else it will exit the game
       window_running = True
@@ -92,7 +97,7 @@ class Game:
 
          #Background image
          window.blit(backgroundImage,(0,0))
-
+         self.score()
          #Loop through event keys
          for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -138,8 +143,8 @@ class Game:
             data["Bullet"]["BulletY"] -= data["Bullet"]["BulletY_moving_speed"]
 
          
-         #Control enemies NOTE: FIX THE LAG
-         for x in range(data["Enemies"]["Number_Of_Enemies"]):
+         #Control enemies
+         for x in range(data["Enemies"]["NOE"]):
             #Moving speed of the enemy
             data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
             #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
@@ -158,7 +163,23 @@ class Game:
                data["Bullet"]["Bullet_moving"] = "ready" 
                explosion = mixer.Sound(data["Music"]["explosion"])
                explosion.play()
-               zuz = data["Enemies"]["EnemyY"][x] = 1000
+               data["Enemies"]["EnemyY"][x] = -1000
+               data["Enemies"]["EnemyX_moving_speed"][x] = 0
+               alive_aliens -= 1
+               data["Score"]["score"] += 1
+
+            if data['Enemies']['EnemyY'][x] > 430:
+               self.game_over()
+               for j in range(data["Enemies"]["NOE"]):
+                  data["Enemies"]["EnemyY"][j] = 1000
+                  data["Enemies"]["EnemyX_moving_speed"][j] = 0
+               data["Bullet"]["BulletY_moving_speed"] = 0
+               data["Player"]["PlayerY"] = -1000
+               data["Score"]["scoreX"] = 1000
+               scoreF = font.Font(data["Score"]["font"], 32)
+               score = scoreF.render(f"Score {data['Score']['score']} out of {data['Enemies']['NOE']}", True, (white))
+               window.blit(score, (220,280))
+              
 
 
 

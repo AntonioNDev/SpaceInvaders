@@ -1,7 +1,7 @@
 {
     "Player": {
         "PlayerX": 330,
-        "PlayerY": 480,
+        "PlayerY": 510,
         "PlayerX_moving_speed": 0,
         "PlayerImage": "images/plane.png"
     },
@@ -13,7 +13,7 @@
         "BulletImage": "images/bullet.png"
     },
     "Enemies": {
-        "Number_Of_Enemies": 3,
+        "NOE": 10,
         "EnemyX": [],
         "EnemyY": [],
         "EnemyX_moving_speed": [],
@@ -25,13 +25,13 @@
         ]
     },
     "Score": {
-        "Score_value": 0,
-        "textX": 10,
-        "textY": 10
+        "score": 0,
+        "font": "Fonts/ARCADE.TTF",
+        "scoreX": 10,
+        "scoreY": 650
     },
     "GameOver": {
-        "textX": 200,
-        "textY": 250
+        "font": "Fonts/Gameplay.ttf"
     },
     "Music": {
         "song": "Music/BGMusic.mp3",
