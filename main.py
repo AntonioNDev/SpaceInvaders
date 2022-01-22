@@ -158,6 +158,7 @@ class Game:
             #print(f"EnemyX:{data['Enemies']['EnemyX']}--EnemyY:{data['Enemies']['EnemyX'][x]} ---- BulletX:{data['Bullet']['BulletX']}--BulletY:{data['Bullet']['BulletY']}")
             kaboom = self.isCollided(data["Enemies"]["EnemyX"][x], data["Enemies"]["EnemyY"][x], bulletX, data["Bullet"]["BulletY"]) 
             
+            #If the bullet hit the enemy then...
             if kaboom == True:
                data["Bullet"]["BulletY"] = 480
                data["Bullet"]["Bullet_moving"] = "ready" 
@@ -168,6 +169,7 @@ class Game:
                alive_aliens -= 1
                data["Score"]["score"] += 1
 
+            #If the enemy come close to your Y then the game is over
             if data['Enemies']['EnemyY'][x] > 430:
                self.game_over()
                for j in range(data["Enemies"]["NOE"]):
