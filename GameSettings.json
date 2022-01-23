@@ -8,12 +8,12 @@
     "Bullet": {
         "BulletX": 0,
         "BulletY": 480,
-        "BulletY_moving_speed": 10,
+        "BulletY_moving_speed": 11,
         "Bullet_moving": "ready",
         "BulletImage": "images/bullet.png"
     },
     "Enemies": {
-        "NOE": 10,
+        "NOE": 8,
         "EnemyX": [],
         "EnemyY": [],
         "EnemyX_moving_speed": [],
@@ -31,7 +31,8 @@
         "scoreY": 650
     },
     "GameOver": {
-        "font": "Fonts/Gameplay.ttf"
+        "font": "Fonts/Gameplay.ttf",
+        "isGameOver": "No"
     },
     "Music": {
         "song": "Music/BGMusic.mp3",

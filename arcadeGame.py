@@ -1,3 +1,4 @@
+from this import d
 import pygame
 import random
 import math
@@ -43,7 +44,7 @@ class Game:
    def player(self,x,y):
       window.blit(pygame.image.load(data["Player"]["PlayerImage"]).convert_alpha(), (x,y))
 
-   #Append enemies in the list
+   #Add enemies in the list
    def createEnemies():
       for _ in range(data["Enemies"]["NOE"]):
          data["Enemies"]["EnemyX"].append(int(random.randint(10,640) + 5))
@@ -96,6 +97,7 @@ class Game:
       window_running = True
       
       while window_running:
+
          #FPS
          clock.tick(FPS)
          #fill the screen with black constantly
@@ -112,19 +114,23 @@ class Game:
 
             #Moving keys
             if event.type == pygame.KEYDOWN:
+
                #IF left key is pressed then move left
                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                   data["Player"]["PlayerX_moving_speed"] = -7
+
                #If right key is pressed move right
                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                   data["Player"]["PlayerX_moving_speed"] = 7
+
                #If space is pressed then shoot:
                if event.key == pygame.K_SPACE:
-                  if data["Bullet"]["Bullet_moving"] != "fired":
+                  if data["Bullet"]["Bullet_moving"] != "fired" and data["GameOver"]["isGameOver"] != "yes":
                      laser = mixer.Sound(data["Music"]["laserSound"])
                      laser.play()
                      bulletX = data["Player"]["PlayerX"]
                      self.bullet(bulletX, data["Bullet"]["BulletY"])
+
             #check if the key is released
             if event.type == pygame.KEYUP:
                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_a or event.key == pygame.K_d:
@@ -134,13 +140,14 @@ class Game:
          #Move it right or left         
          data["Player"]["PlayerX"] += data["Player"]["PlayerX_moving_speed"]
 
-         #Check if it goes biond the window borders
+         #Set borders so the player can't go outside of the window
          if data["Player"]["PlayerX"] <= 0:
             data["Player"]["PlayerX"] = 0
+
          elif data["Player"]["PlayerX"] >= 640:
             data["Player"]["PlayerX"] = 640
 
-         #Check if bullet reach the top if yes then return
+         #Check if bullet reach the top if yes then return it back to the plane
          if data["Bullet"]["BulletY"] <= -50:
             data["Bullet"]["BulletY"] = 480
             data["Bullet"]["Bullet_moving"] = "ready"
@@ -154,10 +161,12 @@ class Game:
          for x in range(data["Enemies"]["NOE"]):
             #Moving speed of the enemy
             data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
+
             #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
             if data["Enemies"]["EnemyX"][x] <= 0:
                data["Enemies"]["EnemyX_moving_speed"][x] = 4
                data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
+               
             elif data["Enemies"]["EnemyX"][x] >= 640:
                data["Enemies"]["EnemyX_moving_speed"][x] = -4
                data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
@@ -185,12 +194,18 @@ class Game:
                   data["Enemies"]["EnemyX"][j] = 1000
                   data["Enemies"]["EnemyX_moving_speed"][j] = 0
 
+               #NOTE: Da se popravi
                data["Bullet"]["BulletY"] = 1000
                data["Player"]["PlayerY"] = -1000
                data["Score"]["scoreX"] = 1000
+               ###################
+
+               #Display the score
                scoreF = font.Font(data["Score"]["font"], 32)
                score = scoreF.render(f"Score {data['Score']['score']} out of {data['Enemies']['NOE']}", True, (white))
                window.blit(score, (220,280))
+
+               data["GameOver"]["isGameOver"] = "yes"
               
             self.enemy(data["Enemies"]["EnemyX"][x],data["Enemies"]["EnemyY"][x])
       
