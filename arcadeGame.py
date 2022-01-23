@@ -45,11 +45,13 @@ class Game:
 
    #Add enemies in the list
    def createEnemies():
+      images = ["images/alien1.png", "images/alien2.png", "images/alien3.png"]
       for _ in range(data["Enemies"]["NOE"]):
          data["Enemies"]["EnemyX"].append(int(random.randint(10,640) + 5))
          data["Enemies"]["EnemyY"].append(int(random.randint(10,150)))
          data["Enemies"]["EnemyX_moving_speed"].append(3)
          data["Enemies"]["EnemyY_moving_speed"].append(int(random.randint(15,35)))
+         data["Enemies"]["EnemiesImages"].append(images[random.randint(0,2)])
 
          if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["NOE"]:
             break
@@ -58,9 +60,9 @@ class Game:
    x = threading.Thread(target=createEnemies, daemon=True)
    x.start()
 
-   #Conf for enemy NOTE: Try to make every alien with their own image
-   def enemy(self,x,y):
-      image = pygame.image.load(data["Enemies"]["EnemiesImages"][2]).convert_alpha()
+   #Conf for enemy 
+   def enemy(self,x,y,i):
+      image = pygame.image.load(data["Enemies"]["EnemiesImages"][i]).convert_alpha()
       window.blit(image, (x,y))
 
    #Conf for bullet
@@ -86,6 +88,10 @@ class Game:
       over_text = font.render("GAME OVER", True, (black))
       window.blit(over_text, (150,200))
 
+   def removeEnemy(self, enemyX, enemyY, enemyXspeed, enemyYspeed, x):
+      for _ in range(data["Enemies"]["NOE"]):
+         data["Enemies"]["EnemyX"].remove()
+
    #Main function
    def main(self):
       global bulletX, alive_aliens
@@ -101,6 +107,7 @@ class Game:
          clock.tick(FPS)
          #fill the screen with black constantly
          window.fill((black))
+         print(f"{int(clock.get_fps())}")
 
          #Background image
          window.blit(backgroundImage,(0,0))
@@ -158,55 +165,63 @@ class Game:
          
          #Control enemies
          for x in range(data["Enemies"]["NOE"]):
-            #Moving speed of the enemy
-            data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
+            #check if it's game over if yes then stop the looping [reduce using of cpu]
+            if data["GameOver"]["isGameOver"] != "yes":
+               #Moving speed of the enemy
+               data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
 
-            #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
-            if data["Enemies"]["EnemyX"][x] <= 0:
-               data["Enemies"]["EnemyX_moving_speed"][x] = 4
-               data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
+               #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
+               if data["Enemies"]["EnemyX"][x] <= 0:
+                  data["Enemies"]["EnemyX_moving_speed"][x] = 5
+                  data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
 
-            elif data["Enemies"]["EnemyX"][x] >= 640:
-               data["Enemies"]["EnemyX_moving_speed"][x] = -4
-               data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
+               elif data["Enemies"]["EnemyX"][x] >= 640:
+                  data["Enemies"]["EnemyX_moving_speed"][x] = -5
+                  data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
 
-            kaboom = self.isCollided(data["Enemies"]["EnemyX"][x], data["Enemies"]["EnemyY"][x], bulletX, data["Bullet"]["BulletY"]) 
-            
-            #NOTE: REMOVE ENEMY AFTER HITTING
-            if kaboom == True:
-               data["Bullet"]["BulletY"] = 480
-               data["Bullet"]["Bullet_moving"] = "ready" 
+               kaboom = self.isCollided(data["Enemies"]["EnemyX"][x], data["Enemies"]["EnemyY"][x], bulletX, data["Bullet"]["BulletY"]) 
+               
+               #NOTE: REMOVE ENEMY AFTER HITTING
+               if kaboom == True:
+                  data["Bullet"]["BulletY"] = 480
+                  data["Bullet"]["Bullet_moving"] = "ready" 
 
-               #explosion sound when the bullet hit enemy
-               explosion = mixer.Sound(data["Music"]["explosion"])
-               explosion.play()
+                  #explosion sound when the bullet hit enemy
+                  explosion = mixer.Sound(data["Music"]["explosion"])
+                  explosion.play()
 
-               data["Enemies"]["EnemyY"][x] = -1000
-               data["Enemies"]["EnemyX_moving_speed"][x] = 0
-               alive_aliens -= 1
-               data["Score"]["score"] += 1
+                  data["Enemies"]["EnemyY"][x] = -1000
+                  data["Enemies"]["EnemyX_moving_speed"][x] = 0
+                  alive_aliens -= 1
+                  data["Score"]["score"] += 1
 
-            #If the enemy come close to player Y then the game is over
-            if data['Enemies']['EnemyY'][x] > 430:
+               #If the enemy come close to player Y then the game is over
+               if data['Enemies']['EnemyY'][x] > 430:
+                  for j in range(data["Enemies"]["NOE"]):
+                     data["Enemies"]["EnemyX"][j] = 1000 #1000
+                     data["Enemies"]["EnemyX_moving_speed"][j] = 0 #0
+                     
+
+                  #NOTE: Da se popravi
+                  data["Bullet"]["BulletY"] = 1000 #1000
+                  data["Player"]["PlayerY"] = -1000 #-1000
+                  data["Score"]["scoreX"] = 1000 #1000
+                  ###################
+
+                  data["GameOver"]["isGameOver"] = "yes"
+               
+               self.enemy(data["Enemies"]["EnemyX"][x],data["Enemies"]["EnemyY"][x], x)
+
+            else:
                self.game_over()
-               for j in range(data["Enemies"]["NOE"]):
-                  data["Enemies"]["EnemyX"][j] = 1000
-                  data["Enemies"]["EnemyX_moving_speed"][j] = 0
-
-               #NOTE: Da se popravi
-               data["Bullet"]["BulletY"] = 1000
-               data["Player"]["PlayerY"] = -1000
-               data["Score"]["scoreX"] = 1000
-               ###################
 
                #Display the score
                scoreF = font.Font(data["Score"]["font"], 32)
                score = scoreF.render(f"Score {data['Score']['score']} out of {data['Enemies']['NOE']}", True, (white))
                window.blit(score, (220,280))
 
-               data["GameOver"]["isGameOver"] = "yes"
-              
-            self.enemy(data["Enemies"]["EnemyX"][x],data["Enemies"]["EnemyY"][x])
+               self.removeEnemy(data["Enemies"]["EnemyX"], data["Enemies"]["EnemyY"], data["Enemies"]["EnemyX_moving_speed"], data["Enemies"]["EnemyY_moving_speed"], x)
+
       
          self.player(data["Player"]["PlayerX"], data["Player"]["PlayerY"])
          pygame.display.update()

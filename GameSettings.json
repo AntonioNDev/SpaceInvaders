@@ -18,11 +18,7 @@
         "EnemyY": [],
         "EnemyX_moving_speed": [],
         "EnemyY_moving_speed": [],
-        "EnemiesImages": [
-            "images/alien1.png",
-            "images/alien2.png",
-            "images/alien3.png"
-        ]
+        "EnemiesImages": []
     },
     "Score": {
         "score": 0,
@@ -32,7 +28,7 @@
     },
     "GameOver": {
         "font": "Fonts/Gameplay.ttf",
-        "isGameOver": "No"
+        "isGameOver": "no"
     },
     "Music": {
         "song": "Music/BGMusic.mp3",
