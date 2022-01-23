@@ -8,7 +8,7 @@
     "Bullet": {
         "BulletX": 0,
         "BulletY": 480,
-        "BulletY_moving_speed": 10,
+        "BulletY_moving_speed": 11,
         "Bullet_moving": "ready",
         "BulletImage": "images/bullet.png"
     },
