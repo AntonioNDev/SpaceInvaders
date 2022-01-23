@@ -1,4 +1,3 @@
-from this import d
 import pygame
 import random
 import math
@@ -166,7 +165,7 @@ class Game:
             if data["Enemies"]["EnemyX"][x] <= 0:
                data["Enemies"]["EnemyX_moving_speed"][x] = 4
                data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
-               
+
             elif data["Enemies"]["EnemyX"][x] >= 640:
                data["Enemies"]["EnemyX_moving_speed"][x] = -4
                data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
