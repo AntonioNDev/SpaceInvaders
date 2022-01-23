@@ -33,6 +33,7 @@ mixer.music.play(-1) """
 backgroundImage = pygame.image.load(data["Background"]["image"]).convert()
 alive_aliens = data["Enemies"]["NOE"]
 FPS = 60
+
 #Main game class
 class Game:
    #Game conf settings
@@ -47,8 +48,8 @@ class Game:
       for _ in range(data["Enemies"]["NOE"]):
          data["Enemies"]["EnemyX"].append(int(random.randint(10,640) + 5))
          data["Enemies"]["EnemyY"].append(int(random.randint(10,150)))
-         data["Enemies"]["EnemyX_moving_speed"].append(4)
-         data["Enemies"]["EnemyY_moving_speed"].append(int(random.randint(10,35)))
+         data["Enemies"]["EnemyX_moving_speed"].append(3)
+         data["Enemies"]["EnemyY_moving_speed"].append(int(random.randint(15,35)))
 
          if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["NOE"]:
             break
@@ -70,17 +71,13 @@ class Game:
    #Check if the bullet and enemy have collided 
    def isCollided(self,enemyX,enemyY,bulletX,bulletY):
       distance = math.sqrt((math.pow(enemyX - bulletX, 2)) + (math.pow(enemyY - bulletY, 2)))
-      if distance < 27:
+      if distance < 25:
          return True
+         
    #Conf for the score
    def score(self):
       font = pygame.font.Font(data["Score"]["font"], 40)
       score_text = font.render(f"Aliens alive {alive_aliens}", True, (white))
-      window.blit(score_text, (data["Score"]["scoreX"], data["Score"]["scoreY"]))
-
-   def displayFps(self):
-      font = pygame.font.Font(data["Score"]["font"], 40)
-      score_text = font.render(f"Aliens alive {pygame.get_fp}", True, (white))
       window.blit(score_text, (data["Score"]["scoreX"], data["Score"]["scoreY"]))
 
    #Game over text
@@ -94,7 +91,8 @@ class Game:
       global bulletX, alive_aliens
       bulletX = 0
       clock = pygame.time.Clock()
-      #while running is true the window will be displayed, else it will exit the game
+
+      #while window_running == True, the game will run, else it will be closed
       window_running = True
       
       while window_running:
@@ -106,6 +104,7 @@ class Game:
          #Background image
          window.blit(backgroundImage,(0,0))
          self.score()
+
          #Loop through event keys
          for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -115,10 +114,10 @@ class Game:
             if event.type == pygame.KEYDOWN:
                #IF left key is pressed then move left
                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                  data["Player"]["PlayerX_moving_speed"] = -8
+                  data["Player"]["PlayerX_moving_speed"] = -7
                #If right key is pressed move right
                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                  data["Player"]["PlayerX_moving_speed"] = 8
+                  data["Player"]["PlayerX_moving_speed"] = 7
                #If space is pressed then shoot:
                if event.key == pygame.K_SPACE:
                   if data["Bullet"]["Bullet_moving"] != "fired":
@@ -151,38 +150,41 @@ class Game:
             data["Bullet"]["BulletY"] -= data["Bullet"]["BulletY_moving_speed"]
 
          
-         #Control enemies NOTE: FIX THE LAG
+         #Control enemies
          for x in range(data["Enemies"]["NOE"]):
             #Moving speed of the enemy
             data["Enemies"]["EnemyX"][x] += data["Enemies"]["EnemyX_moving_speed"][x]
             #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
             if data["Enemies"]["EnemyX"][x] <= 0:
-               data["Enemies"]["EnemyX_moving_speed"][x] = 2
+               data["Enemies"]["EnemyX_moving_speed"][x] = 4
                data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
             elif data["Enemies"]["EnemyX"][x] >= 640:
-               data["Enemies"]["EnemyX_moving_speed"][x] = -2
+               data["Enemies"]["EnemyX_moving_speed"][x] = -4
                data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
 
-            #print(f"EnemyX:{data['Enemies']['EnemyX']}--EnemyY:{data['Enemies']['EnemyX'][x]} ---- BulletX:{data['Bullet']['BulletX']}--BulletY:{data['Bullet']['BulletY']}")
             kaboom = self.isCollided(data["Enemies"]["EnemyX"][x], data["Enemies"]["EnemyY"][x], bulletX, data["Bullet"]["BulletY"]) 
             
-            #If the bullet hit the enemy then...
+            #NOTE: REMOVE ENEMY AFTER HITTING
             if kaboom == True:
                data["Bullet"]["BulletY"] = 480
                data["Bullet"]["Bullet_moving"] = "ready" 
+
+               #explosion sound when the bullet hit enemy
                explosion = mixer.Sound(data["Music"]["explosion"])
                explosion.play()
+
                data["Enemies"]["EnemyY"][x] = -1000
                data["Enemies"]["EnemyX_moving_speed"][x] = 0
                alive_aliens -= 1
                data["Score"]["score"] += 1
 
-            #If the enemy come close to your Y then the game is over
+            #If the enemy come close to player Y then the game is over
             if data['Enemies']['EnemyY'][x] > 430:
                self.game_over()
                for j in range(data["Enemies"]["NOE"]):
-                  data["Enemies"]["EnemyY"][j] = 1000
+                  data["Enemies"]["EnemyX"][j] = 1000
                   data["Enemies"]["EnemyX_moving_speed"][j] = 0
+
                data["Bullet"]["BulletY"] = 1000
                data["Player"]["PlayerY"] = -1000
                data["Score"]["scoreX"] = 1000
@@ -190,17 +192,10 @@ class Game:
                score = scoreF.render(f"Score {data['Score']['score']} out of {data['Enemies']['NOE']}", True, (white))
                window.blit(score, (220,280))
               
-
-
-
             self.enemy(data["Enemies"]["EnemyX"][x],data["Enemies"]["EnemyY"][x])
       
-
-
          self.player(data["Player"]["PlayerX"], data["Player"]["PlayerY"])
-
          pygame.display.update()
-
 
 
 start = Game()
