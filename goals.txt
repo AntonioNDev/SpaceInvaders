@@ -8,7 +8,4 @@ GOALS:
 
 TO FIX:
    -REMOVE ENEMY AFTER HIT
-
-
-REMIND
-   -IF NOT GAME OVER THEN KEEP FOR LOOPS...
+   -FIX COLLISON https://www.youtube.com/watch?v=6LF4k-uc75c

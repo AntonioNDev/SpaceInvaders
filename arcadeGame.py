@@ -45,13 +45,13 @@ class Game:
 
    #Add enemies in the list
    def createEnemies():
-      images = ["images/alien1.png", "images/alien2.png", "images/alien3.png"]
+      images = ["images/alien1.png", "images/alien2.png", "images/alien3.png", "images/alien4.png"]
       for _ in range(data["Enemies"]["NOE"]):
          data["Enemies"]["EnemyX"].append(int(random.randint(10,640) + 5))
          data["Enemies"]["EnemyY"].append(int(random.randint(10,150)))
          data["Enemies"]["EnemyX_moving_speed"].append(3)
-         data["Enemies"]["EnemyY_moving_speed"].append(int(random.randint(15,35)))
-         data["Enemies"]["EnemiesImages"].append(images[random.randint(0,2)])
+         data["Enemies"]["EnemyY_moving_speed"].append(int(random.randint(20,40)))
+         data["Enemies"]["EnemiesImages"].append(images[random.randint(0,3)])
 
          if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["NOE"]:
             break
@@ -88,9 +88,12 @@ class Game:
       over_text = font.render("GAME OVER", True, (black))
       window.blit(over_text, (150,200))
 
-   def removeEnemy(self, enemyX, enemyY, enemyXspeed, enemyYspeed, x):
-      for _ in range(data["Enemies"]["NOE"]):
-         data["Enemies"]["EnemyX"].remove()
+   def removeEnemy(self):
+      data["Enemies"]["EnemyX"].clear()
+      data["Enemies"]["EnemyY"].clear()
+      data["Enemies"]["EnemyX_moving_speed"].clear()
+      data["Enemies"]["EnemyY_moving_speed"].clear()
+      
 
    #Main function
    def main(self):
@@ -107,7 +110,7 @@ class Game:
          clock.tick(FPS)
          #fill the screen with black constantly
          window.fill((black))
-         print(f"{int(clock.get_fps())}")
+         #print(f"{int(clock.get_fps())}")
 
          #Background image
          window.blit(backgroundImage,(0,0))
@@ -197,17 +200,6 @@ class Game:
 
                #If the enemy come close to player Y then the game is over
                if data['Enemies']['EnemyY'][x] > 430:
-                  for j in range(data["Enemies"]["NOE"]):
-                     data["Enemies"]["EnemyX"][j] = 1000 #1000
-                     data["Enemies"]["EnemyX_moving_speed"][j] = 0 #0
-                     
-
-                  #NOTE: Da se popravi
-                  data["Bullet"]["BulletY"] = 1000 #1000
-                  data["Player"]["PlayerY"] = -1000 #-1000
-                  data["Score"]["scoreX"] = 1000 #1000
-                  ###################
-
                   data["GameOver"]["isGameOver"] = "yes"
                
                self.enemy(data["Enemies"]["EnemyX"][x],data["Enemies"]["EnemyY"][x], x)
@@ -215,13 +207,18 @@ class Game:
             else:
                self.game_over()
 
+               #NOTE: Da se popravi
+               data["Bullet"]["BulletY"] = 900 #1000
+               data["Player"]["PlayerY"] = 900 #-1000
+               data["Score"]["scoreX"] = 900 #1000
+               
                #Display the score
                scoreF = font.Font(data["Score"]["font"], 32)
                score = scoreF.render(f"Score {data['Score']['score']} out of {data['Enemies']['NOE']}", True, (white))
                window.blit(score, (220,280))
 
-               self.removeEnemy(data["Enemies"]["EnemyX"], data["Enemies"]["EnemyY"], data["Enemies"]["EnemyX_moving_speed"], data["Enemies"]["EnemyY_moving_speed"], x)
-
+               self.removeEnemy()
+               break
       
          self.player(data["Player"]["PlayerX"], data["Player"]["PlayerY"])
          pygame.display.update()
