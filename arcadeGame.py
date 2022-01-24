@@ -78,8 +78,8 @@ class Game:
          
    #Conf for the score
    def score(self):
-      font = pygame.font.Font(data["Score"]["font"], 40)
-      score_text = font.render(f"Aliens alive {alive_aliens}", True, (white))
+      font = pygame.font.Font(data["Score"]["font"], 35)
+      score_text = font.render(f"Aliens alive: {alive_aliens}", True, (white))
       window.blit(score_text, (data["Score"]["scoreX"], data["Score"]["scoreY"]))
 
    #Game over text

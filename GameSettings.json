@@ -24,7 +24,7 @@
         "score": 0,
         "font": "Fonts/ARCADE.TTF",
         "scoreX": 10,
-        "scoreY": 650
+        "scoreY": 665
     },
     "GameOver": {
         "font": "Fonts/Gameplay.ttf",
