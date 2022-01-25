@@ -26,11 +26,14 @@
         "scoreY": 665
     },
     "GameOver": {
-        "isGameOver": "yes"
+        "isGameOver": "no"
     },
     "Fonts": {
         "arcade": "Fonts/ARCADE.TTF",
-        "gameplay": "Fonts/Gameplay.ttf"  
+        "gameplay": "Fonts/Gameplay.ttf",
+        "arcade_i": "Fonts/ARCADE_I.TTF",
+        "arcade_n": "Fonts/ARCADE_N.TTF",
+        "arcade_r": "Fonts/ARCADE_R.TTF"
     },
     "Music": {
         "song": "Music/BGMusic.mp3",
