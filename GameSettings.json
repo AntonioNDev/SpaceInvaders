@@ -8,12 +8,12 @@
     "Bullet": {
         "BulletX": 0,
         "BulletY": 480,
-        "BulletY_moving_speed": 11,
+        "BulletY_moving_speed": 9,
         "Bullet_moving": "ready",
         "BulletImage": "images/bullet.png"
     },
     "Enemies": {
-        "NOE": 9,
+        "NOE": 8,
         "EnemyX": [],
         "EnemyY": [],
         "EnemyX_moving_speed": [],
@@ -22,13 +22,15 @@
     },
     "Score": {
         "score": 0,
-        "font": "Fonts/ARCADE.TTF",
         "scoreX": 10,
         "scoreY": 665
     },
     "GameOver": {
-        "font": "Fonts/Gameplay.ttf",
-        "isGameOver": "no"
+        "isGameOver": "yes"
+    },
+    "Fonts": {
+        "arcade": "Fonts/ARCADE.TTF",
+        "gameplay": "Fonts/Gameplay.ttf"  
     },
     "Music": {
         "song": "Music/BGMusic.mp3",
@@ -37,5 +39,11 @@
     },
     "Background": {
         "image": "images/background.png"
+    },
+    "Buttons": {
+        "startButtonImg": "images/start_btn.png",
+        "exitButtonImg": "images/end_btn.png",
+        "restartButtonImg": "images/restart.png",
+        "quitButtonImg": "images/quit.png"
     }
 }

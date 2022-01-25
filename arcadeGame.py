@@ -11,7 +11,7 @@ pygame.init()
 
 #Window size
 window = pygame.display.set_mode((700,700))
-pygame.display.set_caption("Arcade shooting")
+pygame.display.set_caption("Space invaders")
 iconPath = pygame.image.load("images/icon.png")
 pygame.display.set_icon(iconPath)
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
@@ -38,7 +38,8 @@ FPS = 60
 class Game:
    #Game conf settings
    def __init__(self) -> None:
-      pass
+      self.clicked = False
+
    #Conf for player
    def player(self,x,y):
       window.blit(pygame.image.load(data["Player"]["PlayerImage"]).convert_alpha(), (x,y))
@@ -68,25 +69,33 @@ class Game:
    #Conf for bullet
    def bullet(self,x,y):
       data["Bullet"]["Bullet_moving"] = "fired"
-      window.blit(pygame.image.load(data["Bullet"]["BulletImage"]).convert_alpha(), (x+16,y+10))
+      bulletImg = pygame.image.load(data["Bullet"]["BulletImage"]).convert_alpha()
+      window.blit(bulletImg, (x+16,y+10))
 
    #Check if the bullet and enemy have collided 
    def isCollided(self,enemyX,enemyY,bulletX,bulletY):
       distance = math.sqrt((math.pow(enemyX - bulletX, 2)) + (math.pow(enemyY - bulletY, 2)))
-      if distance < 25:
+      if distance < 27:
          return True
          
    #Conf for the score
    def score(self):
-      font = pygame.font.Font(data["Score"]["font"], 35)
+      font = pygame.font.Font(data["Fonts"]["arcade"], 35)
       score_text = font.render(f"Aliens alive: {alive_aliens}", True, (white))
       window.blit(score_text, (data["Score"]["scoreX"], data["Score"]["scoreY"]))
 
    #Game over text
-   def game_over(self):
-      font = pygame.font.Font(data["GameOver"]["font"], 64)
-      over_text = font.render("GAME OVER", True, (black))
-      window.blit(over_text, (150,200))
+   def game_over_menu(self):
+      #GameOver title
+      gameover = pygame.font.Font(data["Fonts"]["gameplay"], 64)
+      over_text = gameover.render("GAME OVER", True, (black))
+
+      #Display the score
+      scoreF = font.Font(data["Fonts"]["arcade"], 32)
+      score = scoreF.render(f"Score {data['Score']['score']} out of {data['Enemies']['NOE']}", True, (white))
+
+      window.blit(over_text, (150,100))
+      window.blit(score, (220,180))
 
    def removeEnemy(self):
       data["Enemies"]["EnemyX"].clear()
@@ -98,12 +107,12 @@ class Game:
    #Main function
    def main(self):
       global bulletX, alive_aliens
+      
       bulletX = 0
       clock = pygame.time.Clock()
 
       #while window_running == True, the game will run, else it will be closed
       window_running = True
-      
       while window_running:
 
          #FPS
@@ -175,11 +184,11 @@ class Game:
 
                #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
                if data["Enemies"]["EnemyX"][x] <= 0:
-                  data["Enemies"]["EnemyX_moving_speed"][x] = 5
+                  data["Enemies"]["EnemyX_moving_speed"][x] = 6
                   data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
 
                elif data["Enemies"]["EnemyX"][x] >= 640:
-                  data["Enemies"]["EnemyX_moving_speed"][x] = -5
+                  data["Enemies"]["EnemyX_moving_speed"][x] = -6
                   data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
 
                kaboom = self.isCollided(data["Enemies"]["EnemyX"][x], data["Enemies"]["EnemyY"][x], bulletX, data["Bullet"]["BulletY"]) 
@@ -205,17 +214,12 @@ class Game:
                self.enemy(data["Enemies"]["EnemyX"][x],data["Enemies"]["EnemyY"][x], x)
 
             else:
-               self.game_over()
+               self.game_over_menu()
 
-               #NOTE: Da se popravi
                data["Bullet"]["BulletY"] = 900 #1000
                data["Player"]["PlayerY"] = 900 #-1000
                data["Score"]["scoreX"] = 900 #1000
-               
-               #Display the score
-               scoreF = font.Font(data["Score"]["font"], 32)
-               score = scoreF.render(f"Score {data['Score']['score']} out of {data['Enemies']['NOE']}", True, (white))
-               window.blit(score, (220,280))
+            
 
                self.removeEnemy()
                break
