@@ -1,10 +1,11 @@
 GOALS:
    -PLANE ROTATE AT ANGLE WHILE FLYING LEFT/RIGHT
    -FINAL BOSS
-   -ADD START MENU
    -RESTART BUTTON 
    -SETTINGS   
+   -New background
+   -fix collision 
+   -bigger screen
+   -Enemy shoot
+   
 
-TO FIX:
-   -REMOVE ENEMY AFTER HIT
-   -FIX COLLISON https://www.youtube.com/watch?v=6LF4k-uc75c
