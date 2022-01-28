@@ -1,11 +1,8 @@
 GOALS:
    -PLANE ROTATE AT ANGLE WHILE FLYING LEFT/RIGHT
    -FINAL BOSS
-   -RESTART BUTTON 
    -SETTINGS   
-   -New background
    -fix collision 
-   -bigger screen
    -Enemy shoot
    
 
