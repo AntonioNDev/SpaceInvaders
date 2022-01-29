@@ -2,7 +2,6 @@ import pygame
 import random
 import math
 import json
-import threading
 from pygame import font, mixer
 
 
@@ -12,7 +11,7 @@ pygame.init()
 #Window size
 window = pygame.display.set_mode((700,700))
 pygame.display.set_caption("Space invaders")
-iconPath = pygame.image.load("images/icon.png")
+iconPath = pygame.image.load("Images/icon.png")
 pygame.display.set_icon(iconPath)
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 
@@ -48,20 +47,15 @@ class Game:
 
    #Add enemies in the list
    def createEnemies(self):
-      images = ["images/alien1.png", "images/alien2.png", "images/alien3.png", "images/alien4.png"]
+      images = ["Images/alien1.png", "Images/alien2.png", "Images/alien3.png", "Images/alien4.png"]
       for _ in range(data["Enemies"]["NOE"]):
          data["Enemies"]["EnemyX"].append(int(random.randint(10,640) + 5))
-         data["Enemies"]["EnemyY"].append(int(random.randint(-50,100)))
-         data["Enemies"]["EnemyX_moving_speed"].append(3)
-         data["Enemies"]["EnemyY_moving_speed"].append(int(random.randint(3,5)))
+         data["Enemies"]["EnemyY"].append(int(random.randint(-100,-30)))
+         data["Enemies"]["EnemyY_moving_speed"].append(0.7)
          data["Enemies"]["EnemiesImages"].append(images[random.randint(0,3)])
 
          if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["NOE"]:
             break
-
-   #Thread to call createEnemies
-   """ x = threading.Thread(target=createEnemies, daemon=True)
-   x.start() """
 
    #Conf for enemy 
    def enemy(self,x,y,i):
@@ -173,12 +167,10 @@ class Game:
 
       #while window_running == True, the game will run, else it will be closed
       while self.window_running:
-
          #FPS
          clock.tick(FPS)
          #fill the screen with black constantly
          window.fill((black))
-         #print(f"{int(clock.get_fps())}")
 
          #Background image
          window.blit(backgroundImage,(0,0))
@@ -241,14 +233,9 @@ class Game:
                   #Moving speed of the enemy
                   data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
 
-                  #Check if enemy is reaching the zero of X if yes then turn it back so it doesn't go behind the scene
+                  #If enemy Y is > than 435 then it's game over
                   if data["Enemies"]["EnemyY"][x] != 435:
-                     data["Enemies"]["EnemyY_moving_speed"][x] = 1
-                     #data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
-
-                  """ elif data["Enemies"]["EnemyX"][x] >= 640:
-                     data["Enemies"]["EnemyX_moving_speed"][x] = -6
-                     data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x] """
+                     data["Enemies"]["EnemyY"][x] += data["Enemies"]["EnemyY_moving_speed"][x]
 
                   kaboom = self.isCollided(data["Enemies"]["EnemyX"][x], data["Enemies"]["EnemyY"][x], bulletX, data["Bullet"]["BulletY"]) 
                   
@@ -265,7 +252,8 @@ class Game:
                      explosion.play()
 
                      data["Enemies"]["EnemyY"][x] = -1000
-                     data["Enemies"]["EnemyX_moving_speed"][x] = 0
+                     data["Enemies"]["EnemyY_moving_speed"][x] = 0
+                     print(data["Enemies"])
                      self.aliens_alive -= 1
                      data["Score"]["score"] += 1
 

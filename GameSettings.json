@@ -3,14 +3,14 @@
         "PlayerX": 330,
         "PlayerY": 510,
         "PlayerX_moving_speed": 0,
-        "PlayerImage": "images/plane.png"
+        "PlayerImage": "Images/plane.png"
     },
     "Bullet": {
         "BulletX": 0,
         "BulletY": 480,
         "BulletY_moving_speed": 9,
         "Bullet_moving": "ready",
-        "BulletImage": "images/bullet.png"
+        "BulletImage": "Images/bullet.png"
     },
     "Enemies": {
         "NOE": 8,
@@ -38,6 +38,6 @@
         "explosion": "Music/explosion.wav"
     },
     "Background": {
-        "image": "images/background1.jpg"
+        "image": "Images/background1.jpg"
     }
 }
