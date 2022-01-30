@@ -26,8 +26,8 @@ with open("GameSettings.json") as data:
    data = json.load(data)
 
 #Background music
-""" mixer.music.load(data["Music"]["song"])
-mixer.music.play(-1) """
+mixer.music.load(data["Music"]["song"])
+mixer.music.play(-1)
 
 backgroundImage = pygame.image.load(data["Background"]["image"]).convert()
 FPS = 60
