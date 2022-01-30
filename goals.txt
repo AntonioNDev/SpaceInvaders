@@ -5,6 +5,5 @@ GOALS:
    -fix collision 
    -Enemy shoot
    -more levels (3-4)
-   -win screen
    -more bullets 
    

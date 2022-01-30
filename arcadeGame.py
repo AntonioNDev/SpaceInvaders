@@ -36,9 +36,10 @@ FPS = 60
 class Game:
    #Game conf settings
    def __init__(self) -> None:
-      self.isMenuOpen = True
+      self.isMenuOpen = False
       self.window_running = True
       self.isGameOver = False
+      self.winScreen = False
       self.aliens_alive = data["Enemies"]["NOE"]
 
    #Conf for player
@@ -49,9 +50,9 @@ class Game:
    def createEnemies(self):
       images = ["Images/alien1.png", "Images/alien2.png", "Images/alien3.png", "Images/alien4.png"]
       for _ in range(data["Enemies"]["NOE"]):
-         data["Enemies"]["EnemyX"].append(int(random.randint(10,640) + 5))
-         data["Enemies"]["EnemyY"].append(int(random.randint(-100,-30)))
-         data["Enemies"]["EnemyY_moving_speed"].append(0.7)
+         data["Enemies"]["EnemyX"].append(int(random.randrange(10,680)))
+         data["Enemies"]["EnemyY"].append(int(random.randrange(-100,-30)))
+         data["Enemies"]["EnemyY_moving_speed"].append(0.5)
          data["Enemies"]["EnemiesImages"].append(images[random.randint(0,3)])
 
          if len(data["Enemies"]["EnemyX"]) >= data["Enemies"]["NOE"]:
@@ -156,6 +157,25 @@ class Game:
 
       window.blit(fps_text, (10,10))
 
+   def win_window(self):
+      self.winScreen = True
+      
+      #GameOver title
+      win = pygame.font.Font(data["Fonts"]["gameplay"], 64)
+      over_text = win.render("You Won!", True, (white))
+
+      #Display the score
+      scoreF = font.Font(data["Fonts"]["arcade"], 32)
+      score = scoreF.render(f"Score {data['Score']['score']} out of {data['Enemies']['NOE']}", True, (white))
+      
+      #Info
+      info = font.Font(data["Fonts"]["arcade"], 32)
+      info = scoreF.render("More levels will come soon. Game in production hehehe.", True, (white))
+      
+
+      window.blit(over_text, (180,130))
+      window.blit(info, (15,280))
+
    #Main function
    def main(self):
       global bulletX, alive_aliens
@@ -194,7 +214,7 @@ class Game:
 
                #If space is pressed then shoot:
                if event.key == pygame.K_SPACE:
-                  if data["Bullet"]["Bullet_moving"] != "fired" and self.isGameOver != True and self.isMenuOpen != True:
+                  if data["Bullet"]["Bullet_moving"] != "fired" and self.isGameOver != True and self.isMenuOpen != True and self.winScreen != True:
                      laser = mixer.Sound(data["Music"]["laserSound"])
                      laser.play()
                      bulletX = data["Player"]["PlayerX"]
@@ -242,7 +262,7 @@ class Game:
                   data["Player"]["PlayerY"] = 510
                   data["Score"]["scoreX"] = 10
 
-                  #NOTE: REMOVE ENEMY AFTER HITTING
+                  #if enemy is hit then remove it from the display
                   if kaboom == True:
                      data["Bullet"]["BulletY"] = 480
                      data["Bullet"]["Bullet_moving"] = "ready" 
@@ -253,7 +273,6 @@ class Game:
 
                      data["Enemies"]["EnemyY"][x] = -1000
                      data["Enemies"]["EnemyY_moving_speed"][x] = 0
-                     print(data["Enemies"])
                      self.aliens_alive -= 1
                      data["Score"]["score"] += 1
 
@@ -276,6 +295,13 @@ class Game:
             data["Bullet"]["BulletX"] = 900
             data["Player"]["PlayerY"] = 900
             data["Score"]["scoreX"] = 900
+
+         if self.aliens_alive == 0:
+            self.win_window()
+            data["Bullet"]["BulletX"] = 900
+            data["Player"]["PlayerY"] = 900
+            data["Score"]["scoreX"] = 900
+         
       
          self.showFps(clock.get_fps())
          self.player(data["Player"]["PlayerX"], data["Player"]["PlayerY"])
