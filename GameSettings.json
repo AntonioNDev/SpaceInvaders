@@ -13,7 +13,7 @@
         "BulletImage": "Images/bullet.png"
     },
     "Enemies": {
-        "NOE": 9,
+        "NOE": 11,
         "EnemyX": [],
         "EnemyY": [],
         "EnemyX_moving_speed": [],
