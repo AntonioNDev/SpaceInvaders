@@ -50,7 +50,7 @@ class Game:
    def createEnemies(self):
       images = ["Images/alien1.png", "Images/alien2.png", "Images/alien3.png", "Images/alien4.png"]
       for _ in range(data["Enemies"]["NOE"]):
-         data["Enemies"]["EnemyX"].append(int(random.randrange(10,680)))
+         data["Enemies"]["EnemyX"].append(int(random.randrange(10,630)))
          data["Enemies"]["EnemyY"].append(int(random.randrange(-100,-30)))
          data["Enemies"]["EnemyY_moving_speed"].append(0.5)
          data["Enemies"]["EnemiesImages"].append(images[random.randint(0,3)])
